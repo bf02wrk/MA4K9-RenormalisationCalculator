@@ -85,7 +85,7 @@ def calculate_renormalised_amplitude(N):
         if n == 0:
             return 1
         else:
-            answer = -sympy.I * lam**(n + 1) / (2**n * (4 * sympy.pi)**(2 * n))     # constant part
+            answer = lam**(n) / (2**n * (4 * sympy.pi)**(2 * n))     # constant part
             answer *= sum([(-n * z * L)**i / sympy.factorial(i) for i in range(N + 1)])     # exponent part
             answer *= gammas[n - 1]   # gamma part
             answer = sympy.polys.polytools.reduced(answer, [z**(N + 1 - n)])[1]     # truncates
@@ -124,10 +124,11 @@ def calculate_renormalised_amplitude(N):
         total_phi = total_phi.subs([(Y[i], phi_values[i]) for i in range(n - 1)])
         phi_minus_values += [-T(sympy.simplify(phi_values[n - 1] + total_phi))]     # adding phi- to the list
         phi_plus_values += [sympy.simplify(phi_values[n - 1] + phi_minus_values[n - 1] + total_phi)]
-    return sympy.polys.polytools.reduced(phi_plus_values[N - 1], [z])[1]
+    return sympy.polys.polytools.reduced(phi_plus_values[N - 1], [z])[1]*-sympy.I*lam
+
 
 if __name__ == "__main__":
-    for i in range(1,4):
+    for i in range(1,6):
         t0 = time.time()
         expression = calculate_renormalised_amplitude(i)
         log_val = -log(4*scipy.pi) + (0+1j)*scipy.pi
